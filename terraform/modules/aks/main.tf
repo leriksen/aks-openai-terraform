@@ -82,7 +82,6 @@ resource "azurerm_kubernetes_cluster" "aks_cluster" {
   }
 
   azure_active_directory_role_based_access_control {
-    managed                    = true
     tenant_id                  = var.tenant_id
     admin_group_object_ids     = var.admin_group_object_ids
     azure_rbac_enabled         = var.azure_rbac_enabled
@@ -108,52 +107,33 @@ resource "azurerm_monitor_diagnostic_setting" "settings" {
 
   enabled_log {
     category = "kube-apiserver"
-
-    retention_policy {
-      enabled = false
-      days    = var.log_analytics_retention_days
-    }
   }
 
   enabled_log {
     category = "kube-audit"
-
-
   }
 
   enabled_log {
     category = "kube-audit-admin"
-
-
   }
 
   enabled_log {
     category = "kube-controller-manager"
-
-
   }
 
   enabled_log {
     category = "kube-scheduler"
-
-
   }
 
   enabled_log {
     category = "cluster-autoscaler"
-
-
   }
 
   enabled_log {
     category = "guard"
-
-
   }
 
   metric {
     category = "AllMetrics"
-
-
   }
 }
