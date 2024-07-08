@@ -1,12 +1,7 @@
 parameters:
-  - name: terraform_version
-    default: 1.3.7
-  - name: terraform_path
-    default: /usr/local/bin
-  - name: sa
-  - name: container
+  - name: tf_creds
+  - name: tf_workspace
   - name: environment
-  - name: project
 
 stages:
   - stage: terraform_apply
@@ -19,55 +14,42 @@ stages:
         displayName: Terraform Apply
         workspace:
           clean: all
-        environment: ${{ parameters.azdo_release_env }}
+        environment: ${{ parameters.environment }}
         strategy:
           runOnce:
             deploy:
               steps:
-                - checkout: self
-      
-                # disable for now and just track via the version requirements in terraform.tf
-                # - task: Bash@3
-                #   displayName: install terraform
-                #   inputs:
-                #     targetType: filePath
-                #     filePath: scripts/terraform_install.sh
-                #     arguments: >
-                #       -v ${{ parameters.terraform_version }}
-                #       -d ${{ parameters.terraform_path }}
-                # 
-                # - task: Bash@3
-                #   displayName: prepend terraform path
-                #   inputs:
-                #     targetType: inline
-                #     script: |
-                #       echo "##vso[task.prependpath]${{ parameters.terraform_path }}"
+                - task: DownloadSecureFile@1
+                  name: tf_creds
+                  inputs:
+                    secureFile: ${{ parameters.tf_creds }}
 
-                - task: AzureCLI@2
+                - bash: |
+                    mkdir -p ~/.terraform.d
+                  displayName: Setup Creds Dest
+
+                - task: CopyFiles@2
+                  inputs:
+                    sourceFolder: $(Agent.TempDirectory)
+                    contents: ${{ parameters.tf_creds }}
+                    targetFolder: "~/.terraform.d"
+
+                - task: Bash@3
                   displayName: terraform init
                   inputs:
-                    azureSubscription: arm
-                    scriptType: bash
-                    scriptLocation: scriptPath
-                    scriptPath: scripts/terraform_init.sh
+                    targetType: filePath
+                    filePath: $(Agent.BuildDirectory)/terraform-plan/scripts/terraform_init.sh
                     workingDirectory: $(Agent.BuildDirectory)/terraform-plan/terraform
-                    addSpnToEnvironment: true
-                    arguments: >
-                      -backend-config="storage_account_name=${{ parameters.sa }}"
-                      -backend-config="container_name=${{ parameters.container }}"
-                      -backend-config="key=${{ paramters.project }}-${{ parameters.environment }}.tfstate"
-                      -backend-config="use_azuread_auth=true"
                   env:
                     TF_IN_AUTOMATION: true
+                    TF_WORKSPACE: ${{ parameters.tf_workspace }}
 
-                - task: AzureCLI@2
+                - task: Bash@3
                   displayName: terraform apply
                   inputs:
-                    azureSubscription: arm
-                    scriptType: bash
-                    scriptLocation: scriptPath
-                    scriptPath: scripts/terraform_apply.sh
-                    workingDirectory: $(Agent.BuildDirectory)/terraform-plan/terraform
-                    addSpnToEnvironment: true
+                    targetType: filePath
+                    filePath: $(Agent.BuildDirectory)/terraform-plan/scripts/terraform_apply.sh
+                    workingDirectory: $(Agent.BuildDirectory)/terraform-plan//terraform
                   env:
                     TF_IN_AUTOMATION: true
+                    TF_WORKSPACE: ${{ parameters.tf_workspace }}

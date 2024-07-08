@@ -1,9 +1,6 @@
 variables:
   - group: terraform-base
-  - group: devops-base
-  - group: devops-non-prod
   - group: devops-dev
-  - group: aks-openai-terraform-base
   - group: aks-openai-terraform-dev
 
 pool:
