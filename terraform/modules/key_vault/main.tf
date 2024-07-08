@@ -39,8 +39,7 @@ resource "azurerm_monitor_diagnostic_setting" "settings" {
     category = "AuditEvent"
 
     retention_policy {
-      enabled = true
-      days    = var.log_analytics_retention_days
+      enabled = false
     }
   }
 
@@ -48,8 +47,7 @@ resource "azurerm_monitor_diagnostic_setting" "settings" {
     category = "AzurePolicyEvaluationDetails"
 
     retention_policy {
-      enabled = true
-      days    = var.log_analytics_retention_days
+      enabled = false
     }
   }
 
@@ -57,8 +55,7 @@ resource "azurerm_monitor_diagnostic_setting" "settings" {
     category = "AllMetrics"
 
     retention_policy {
-      enabled = true
-      days    = var.log_analytics_retention_days
+      enabled = false
     }
   }
 }

@@ -110,7 +110,7 @@ resource "azurerm_monitor_diagnostic_setting" "settings" {
     category = "kube-apiserver"
 
     retention_policy {
-      enabled = true  
+      enabled = false
       days    = var.log_analytics_retention_days
     }
   }
@@ -119,8 +119,7 @@ resource "azurerm_monitor_diagnostic_setting" "settings" {
     category = "kube-audit"
 
     retention_policy {
-      enabled = true
-      days    = var.log_analytics_retention_days
+      enabled = false
     }
   }
 
@@ -128,8 +127,7 @@ resource "azurerm_monitor_diagnostic_setting" "settings" {
     category = "kube-audit-admin"
 
     retention_policy {
-      enabled = true
-      days    = var.log_analytics_retention_days
+      enabled = false
     }
   }
 
@@ -137,8 +135,7 @@ resource "azurerm_monitor_diagnostic_setting" "settings" {
     category = "kube-controller-manager"
 
     retention_policy {
-      enabled = true
-      days    = var.log_analytics_retention_days
+      enabled = false
     }
   }
 
@@ -146,8 +143,7 @@ resource "azurerm_monitor_diagnostic_setting" "settings" {
     category = "kube-scheduler"
 
     retention_policy {
-      enabled = true
-      days    = var.log_analytics_retention_days
+      enabled = false
     }
   }
 
@@ -155,8 +151,7 @@ resource "azurerm_monitor_diagnostic_setting" "settings" {
     category = "cluster-autoscaler"
 
     retention_policy {
-      enabled = true
-      days    = var.log_analytics_retention_days
+      enabled = false
     }
   }
 
@@ -164,8 +159,7 @@ resource "azurerm_monitor_diagnostic_setting" "settings" {
     category = "guard"
 
     retention_policy {
-      enabled = true
-      days    = var.log_analytics_retention_days
+      enabled = false
     }
   }
 
@@ -173,8 +167,7 @@ resource "azurerm_monitor_diagnostic_setting" "settings" {
     category = "AllMetrics"
 
     retention_policy {
-      enabled = true
-      days    = var.log_analytics_retention_days
+      enabled = false
     }
   }
 }
