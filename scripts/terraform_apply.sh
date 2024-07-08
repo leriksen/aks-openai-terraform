@@ -2,4 +2,4 @@
 
 set -euo pipefail
 
-terraform apply -input=false -auto-approve tfplan.tfout
+terraform apply -input=false tfplan.tfout
