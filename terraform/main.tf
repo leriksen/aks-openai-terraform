@@ -7,8 +7,8 @@ terraform {
   }
 
   cloud {
-    organization = "leriksen-experiment"
-    hostname     = "app.terraform.io"
+    organization = "#{hcp_organization}#"
+    hostname     = "#{hcp_hostname}#"
   }
 }
 

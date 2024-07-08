@@ -27,6 +27,13 @@ stages:
               contents: ${{ parameters.tf_creds }}
               targetFolder: "~/.terraform.d"
 
+          - task: replacetokens@5
+            inputs:
+              targetFiles: $(System.DefaultWorkingDirectory)/terraform/main.tf
+
+          - script: |
+              head $(System.DefaultWorkingDirectory)/terraform/main.tf
+
           - task: Bash@3
             displayName: terraform init
             inputs:
