@@ -1,6 +1,7 @@
 parameters:
   - name: tf_creds
   - name: tf_workspace
+  - name: environment
 
 stages:
   - stage: terraform_plan
