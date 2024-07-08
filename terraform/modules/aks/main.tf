@@ -118,56 +118,42 @@ resource "azurerm_monitor_diagnostic_setting" "settings" {
   enabled_log {
     category = "kube-audit"
 
-    retention_policy {
-      enabled = false
-    }
+
   }
 
   enabled_log {
     category = "kube-audit-admin"
 
-    retention_policy {
-      enabled = false
-    }
+
   }
 
   enabled_log {
     category = "kube-controller-manager"
 
-    retention_policy {
-      enabled = false
-    }
+
   }
 
   enabled_log {
     category = "kube-scheduler"
 
-    retention_policy {
-      enabled = false
-    }
+
   }
 
   enabled_log {
     category = "cluster-autoscaler"
 
-    retention_policy {
-      enabled = false
-    }
+
   }
 
   enabled_log {
     category = "guard"
 
-    retention_policy {
-      enabled = false
-    }
+
   }
 
   metric {
     category = "AllMetrics"
 
-    retention_policy {
-      enabled = false
-    }
+
   }
 }

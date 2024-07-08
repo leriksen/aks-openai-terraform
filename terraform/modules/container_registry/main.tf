@@ -51,24 +51,18 @@ resource "azurerm_monitor_diagnostic_setting" "settings" {
   enabled_log {
     category = "ContainerRegistryRepositoryEvents"
 
-    retention_policy {
-      enabled = false
-    }
+
   }
 
   enabled_log {
     category = "ContainerRegistryLoginEvents"
 
-    retention_policy {
-      enabled = false
-    }
+
   }
 
   metric {
     category = "AllMetrics"
 
-    retention_policy {
-      enabled = false
-    }
+
   }
 }

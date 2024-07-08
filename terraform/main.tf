@@ -67,35 +67,35 @@ module "virtual_network" {
     {
       name : var.system_node_pool_subnet_name
       address_prefixes : var.system_node_pool_subnet_address_prefix
-      private_endpoint_network_policies_enabled : true
+      private_endpoint_network_policies_enabled : "Enabled"
       private_link_service_network_policies_enabled : false
       delegation: null
     },
     {
       name : var.user_node_pool_subnet_name
       address_prefixes : var.user_node_pool_subnet_address_prefix
-      private_endpoint_network_policies_enabled : true
+      private_endpoint_network_policies_enabled : "Enabled"
       private_link_service_network_policies_enabled : false
       delegation: null
     },
     {
       name : var.pod_subnet_name
       address_prefixes : var.pod_subnet_address_prefix
-      private_endpoint_network_policies_enabled : true
+      private_endpoint_network_policies_enabled : "Enabled"
       private_link_service_network_policies_enabled : false
       delegation: "Microsoft.ContainerService/managedClusters"
     },
     {
       name : var.vm_subnet_name
       address_prefixes : var.vm_subnet_address_prefix
-      private_endpoint_network_policies_enabled : true
+      private_endpoint_network_policies_enabled : "Enabled"
       private_link_service_network_policies_enabled : false
       delegation: null
     },
     {
       name : "AzureBastionSubnet"
       address_prefixes : var.bastion_subnet_address_prefix
-      private_endpoint_network_policies_enabled : true
+      private_endpoint_network_policies_enabled : "Enabled"
       private_link_service_network_policies_enabled : false
       delegation: null
     }

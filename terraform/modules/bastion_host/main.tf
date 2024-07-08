@@ -39,18 +39,10 @@ resource "azurerm_monitor_diagnostic_setting" "settings" {
 
   enabled_log {
     category = "BastionAuditLogs"
-
-    retention_policy {
-      enabled = false
-    }
   }
 
   metric {
     category = "AllMetrics"
-
-    retention_policy {
-      enabled = false
-    }
   }
 }
 
@@ -61,33 +53,17 @@ resource "azurerm_monitor_diagnostic_setting" "pip_settings" {
 
   enabled_log {
     category = "DDoSProtectionNotifications"
-
-    retention_policy {
-      enabled = false
-    }
   }
 
   enabled_log {
     category = "DDoSMitigationFlowLogs"
-
-    retention_policy {
-      enabled = false
-    }
   }
 
   enabled_log {
     category = "DDoSMitigationReports"
-    
-    retention_policy {
-      enabled = false
-    }
   }
 
   metric {
     category = "AllMetrics"
-
-    retention_policy {
-      enabled = false
-    }
   }
 }
