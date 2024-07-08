@@ -28,8 +28,10 @@ stages:
               targetFolder: "~/.terraform.d"
 
           - task: replacetokens@5
+            displayName: Replace Tokens
             inputs:
-              targetFiles: $(System.DefaultWorkingDirectory)/terraform/main.tf
+              targetFiles: |
+                $(System.DefaultWorkingDirectory)/terraform/main.tf
 
           - script: |
               head $(System.DefaultWorkingDirectory)/terraform/main.tf
