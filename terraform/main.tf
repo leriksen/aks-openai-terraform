@@ -50,6 +50,7 @@ module "log_analytics_workspace" {
   location                         = var.location
   resource_group_name              = azurerm_resource_group.rg.name
   solution_plan_map                = var.solution_plan_map
+  daily_quota_gb                   = var.daily_quota_gb
   tags                             = var.tags
 }
 

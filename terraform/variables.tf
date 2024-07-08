@@ -741,3 +741,9 @@ variable "deployment_script_primary_script_uri" {
   type = string
   default = "https://paolosalvatori.blob.core.windows.net/scripts/install-nginx-via-helm-and-create-sa.sh"
 }
+
+variable "daily_quota_gb" {
+  description = " (Optional) The workspace daily quota for ingestion in GB. Defaults to -1 (unlimited) if omitted."
+  type        = number
+  default     = -1
+}

@@ -41,3 +41,9 @@ variable "retention_in_days" {
   type        = number
   default     = 30
 }
+
+variable "daily_quota_gb" {
+  description = " (Optional) The workspace daily quota for ingestion in GB. Defaults to -1 (unlimited) if omitted."
+  type        = number
+  default     = -1
+}

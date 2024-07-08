@@ -5,7 +5,7 @@ resource "azurerm_log_analytics_workspace" "log_analytics_workspace" {
   sku                 = var.sku
   tags                = var.tags
   retention_in_days   = var.retention_in_days != "" ? var.retention_in_days : null
-
+  daily_quota_gb      = var.daily_quota_gb
   lifecycle {
     ignore_changes = [
       tags
