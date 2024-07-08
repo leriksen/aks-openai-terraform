@@ -5,6 +5,11 @@ terraform {
       version = "~>3.0"
     }
   }
+
+  cloud {
+    organization = "leriksen-experiment"
+    hostname     = "app.terraform.io"
+  }
 }
 
 provider "azurerm" {
