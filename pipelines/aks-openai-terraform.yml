@@ -1,0 +1,32 @@
+variables:
+  - group: terraform-base
+  - group: devops-base
+  - group: devops-non-prod
+  - group: devops-dev
+  - group: aks-openai-terraform-base
+  - group: aks-openai-terraform-dev
+
+pool:
+  vmImage: ubuntu-22.04
+
+trigger:
+  batch: true
+  branches:
+    include:
+      - master
+      - main
+  paths:
+    exclude: []
+
+stages:
+  - template: ./templates/plan.yml
+    parameters:
+      tf_workspace:      $(tf_workspace)
+      tf_creds:          $(tf_creds)
+      environment:       $(environment)
+
+  - template: ./templates/apply.yml
+    parameters:
+      tf_workspace:      $(tf_workspace)
+      tf_creds:          $(tf_creds)
+      environment:       $(environment)

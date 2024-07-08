@@ -1,0 +1,155 @@
+parameters:
+  - name: environment
+  - name: tf_creds
+  - name: tf_workspace
+  - name: tf_version
+    type: string
+    default: 1.9.0
+  - name: tf_path
+    type: string
+    default: /usr/local/bin
+
+stages:
+  - stage: terraform_plan
+    displayName: Terraform Plan
+    jobs:
+      - job: terraform_plan
+        displayName: Terraform Plan
+        workspace:
+          clean: all
+        steps:
+          # disable for now and just track via the version requirements in terraform.tf
+          - task: Bash@3
+            displayName: install terraform
+            inputs:
+              targetType: filePath
+              filePath: scripts/terraform_install.sh
+              arguments: >
+                -v ${{ parameters.tf_version }}
+                -d ${{ parameters.tf_path }}
+
+          - task: Bash@3
+            displayName: prepend terraform path
+            inputs:
+              targetType: inline
+              script: |
+                echo "##vso[task.prependpath]${{ parameters.tf_path }}"
+
+          - task: AzureCLI@2
+            displayName: terraform init
+            inputs:
+              azureSubscription: ${{ parameters.service_connection }}
+              scriptType: bash
+              scriptLocation: scriptPath
+              scriptPath: scripts/terraform_init.sh
+              workingDirectory: $(System.DefaultWorkingDirectory)/terraform
+              addSpnToEnvironment: true
+              arguments: >
+                -backend-config="storage_account_name=${{ parameters.sa }}"
+                -backend-config="container_name=${{ parameters.container }}"
+                -backend-config="key=${{ parameters.project }}-${{ parameters.environment }}.tfstate"
+            env:
+              TF_IN_AUTOMATION: true
+              ARM_SUBSCRIPTION_ID: ${{ parameters.subscription_id }}
+              ARM_USE_AZUREAD: true
+
+          - task: AzureCLI@2
+            displayName: terraform plan
+            name: plan # needed for result later
+            inputs:
+              azureSubscription: ${{ parameters.service_connection }}
+              scriptType: bash
+              scriptLocation: scriptPath
+              scriptPath: scripts/terraform_plan.sh
+              workingDirectory: $(System.DefaultWorkingDirectory)/terraform
+              addSpnToEnvironment: true
+              arguments: >
+                -out tfplan.tfout
+                -var "env=${{ parameters.environment }}"
+            env:
+              TF_IN_AUTOMATION: true
+              ARM_SUBSCRIPTION_ID: ${{ parameters.subscription_id }}
+              ARM_USE_AZUREAD: true
+
+          # - task: CopyFiles@2
+          #   displayName: stage files to $(Build.StagingDirectory)
+          #   condition: and(succeeded(), eq(variables['plan.result'], 'changed'))
+          #   inputs:
+          #     sourceFolder: $(System.DefaultWorkingDirectory)
+          #     contents: |
+          #       terraform/**/*
+          #       modules/**/*
+          #       !scripts/**/*
+          #       !pipelines/**/*
+          #       !.gitignore
+          #       !**/.git/**/*
+          #       !terraform/.terraform/**/*
+          #     targetFolder: $(Build.StagingDirectory)
+          #     cleanTargetFolder: true
+          
+          # - task: PublishBuildArtifacts@1
+          #   displayName: upload tf artifact
+          #   condition: and(succeeded(), eq(variables['plan.result'], 'changed'))
+          #   inputs:
+          #     artifactName: terraform-plan
+          - task: DownloadSecureFile@1
+            name: tf_creds
+            inputs:
+              secureFile: ${{ parameters.tf_creds }}
+
+          - bash: |
+              mkdir -p ~/.terraform.d
+            displayName: Setup Creds Dest
+
+          - task: CopyFiles@2
+            inputs:
+              sourceFolder: $(Agent.TempDirectory)
+              contents: ${{ parameters.tf_creds }}
+              targetFolder: "~/.terraform.d"
+
+          - task: Bash@3
+            displayName: terraform init
+            inputs:
+              targetType: filePath
+              filePath: scripts/terraform_init.sh
+              workingDirectory: $(System.DefaultWorkingDirectory)/terraform
+            env:
+              TF_IN_AUTOMATION: true
+              TF_WORKSPACE: ${{ parameters.tf_workspace }}
+
+          - task: Bash@3
+            displayName: terraform plan
+            name: plan # needed for result later
+            inputs:
+              targetType: filePath
+              filePath: scripts/terraform_plan.sh
+              workingDirectory: $(System.DefaultWorkingDirectory)/terraform
+              arguments: >
+                -var pguser=$(pguser)
+                -var pgpassword=$(pgpassword)
+                -out tfplan.tfout
+            env:
+              TF_IN_AUTOMATION: true
+              TF_WORKSPACE: ${{ parameters.tf_workspace }}
+
+          - task: CopyFiles@2
+            displayName: stage files to $(Build.StagingDirectory)
+            condition: and(succeeded(), eq(variables['plan.result'], 'changed'))
+            inputs:
+              sourceFolder: $(System.DefaultWorkingDirectory)
+              contents: |
+                terraform/**/*
+                modules/**/*
+                scripts/**/*
+                !pipelines/**/*
+                !.gitignore
+                !**/.git/**/*
+                !terraform/.terraform/**/*
+              targetFolder: $(Build.StagingDirectory)
+              cleanTargetFolder: true
+
+          - task: PublishBuildArtifacts@1
+            displayName: upload tf artifact
+            condition: and(succeeded(), eq(variables['plan.result'], 'changed'))
+            inputs:
+              artifactName: terraform-plan
